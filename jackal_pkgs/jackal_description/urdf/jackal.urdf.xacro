@@ -259,22 +259,22 @@
   <!-- Optional custom includes. -->
   <xacro:include filename="$(optenv JACKAL_URDF_EXTRAS empty.urdf)" />
 
-
   <!-- ################################################################# -->
 
   <!-- Velodyne URDF, plugin -->
   <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
   <!-- <VLP-16 parent="front_mount" name="velodyne" topic="/velodyne_points"> -->
   <VLP-16 parent="front_mount" name="VLP-16" topic="/velodyne_points">
-    <origin xyz="0 0 0.052" rpy="0 0 0" />
+    <!-- <origin xyz="0 0 0.052" rpy="0 0 0" /> -->
+		<origin xyz="0 0 0.0601" rpy="0 0 0" />
   </VLP-16>
 
-    <!-- Velodyne mount stuff -->
+	<!-- velodyne mount stuff -->
   <link name="velodyne_mount">
     <visual>
-      <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
+      <origin xyz="0 0 -0.0079" rpy="0.0 0.0 0.0" />
       <geometry>
-        <mesh filename="package://jackal_description/urdf/velodyne_mount.stl"/>
+        <mesh filename="package://jackal_description/urdf/lidar_cam_support.stl"/>
       </geometry>
       <material name="aluminum" >
         <color rgba="0.45 0.45 0.45 1"/>
@@ -283,12 +283,66 @@
   </link>
 
   <joint name="velodyne_mount_joint" type="fixed">
-  	<!-- Here the parent has to be velodyne_base_link -->
-    <!-- <parent link="velodyne_base_link"/> -->
     <parent link="VLP-16_base_link"/>
     <child link="velodyne_mount"/>
     <origin xyz="0 0 0" />
   </joint>
 
+	<!-- ZED camera mount-->
+
+  <link name="zed_camera_center">
+    <visual>
+      <!-- To change the location of the camera -->
+    	<origin xyz="0.1701 0 -0.0805" rpy="0 0 0"/>
+      	<geometry>
+        	<mesh filename="package://jackal_description/urdf/ZED.stl" />
+        </geometry>
+        <material name="light_grey">
+        	<color rgba="0.8 0.8 0.8 0.8"/>
+        </material>
+    </visual>
+  </link>
+
+  <joint name="zed_camera_mount_joint" type="fixed">
+    <parent link="velodyne_mount"/>
+    <child link="zed_camera_center"/>
+    <origin xyz="0 0 0" />
+  </joint>
+
+	<!-- Left Camera -->
+
+	<link name="zed_left_camera_frame" />
+
+  <joint name="zed_left_camera_joint" type="fixed">
+    <parent link="zed_camera_center"/>
+    <child link="zed_left_camera_frame"/>
+    <origin xyz="0 0.06 0" rpy="0 0 0" />
+  </joint>
+
+  <link name="zed_left_camera_optical_frame"/>
+
+  <joint name="zed_left_camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.57079632679 0.0 -1.57079632679"/>
+   	<parent link="zed_left_camera_frame"/>
+    <child link="zed_left_camera_optical_frame"/>
+  </joint>
+
+  <!-- Right Camera -->
+
+  <link name="zed_right_camera_frame" />
+
+  <joint name="zed_right_camera_joint" type="fixed">
+  	<parent link="zed_camera_center"/>
+    <child link="zed_right_camera_frame"/>
+    <origin xyz="0 -0.06 0" rpy="0 0 0" />
+  </joint>
+
+	<link name="zed_right_camera_optical_frame"/>
+
+  <joint name="zed_right_camera_optical_joint" type="fixed">
+  	<origin xyz="0 0 0" rpy="-1.57079632679 0.0 -1.57079632679"/>
+  	<parent link="zed_right_camera_frame"/>
+  	<child link="zed_right_camera_optical_frame"/>
+  </joint>
 
 </robot>
