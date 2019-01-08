@@ -7,7 +7,7 @@ VelodyneLaserScan::VelodyneLaserScan(ros::NodeHandle &nh, ros::NodeHandle &nh_pr
     ring_count_(0), nh_(nh), srv_(nh_priv)
 {
   ros::SubscriberStatusCallback connect_cb = boost::bind(&VelodyneLaserScan::connectCb, this);
-  pub_ = nh.advertise<sensor_msgs::LaserScan>("scan", 10, connect_cb, connect_cb);
+  pub_ = nh.advertise<sensor_msgs::LaserScan>("front/scan", 10, connect_cb, connect_cb);
   
   srv_.setCallback(boost::bind(&VelodyneLaserScan::reconfig, this, _1, _2));
 }
@@ -15,11 +15,11 @@ VelodyneLaserScan::VelodyneLaserScan(ros::NodeHandle &nh, ros::NodeHandle &nh_pr
 void VelodyneLaserScan::connectCb()
 {
   boost::lock_guard<boost::mutex> lock(connect_mutex_);
-  if (!pub_.getNumSubscribers()) {
-    sub_.shutdown();
-  } else if (!sub_) {
+ // if (!pub_.getNumSubscribers()) {
+ //   sub_.shutdown();
+ // } else if (!sub_) {
     sub_ = nh_.subscribe("velodyne_points", 10, &VelodyneLaserScan::recvCallback, this);
-  }
+ // }
 }
 
 void VelodyneLaserScan::recvCallback(const sensor_msgs::PointCloud2ConstPtr& msg)

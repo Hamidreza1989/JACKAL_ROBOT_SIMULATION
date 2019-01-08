@@ -17,4 +17,7 @@
   <remap from="odom" to="odometry/filtered" />
  </node>
 
+ <!-- Convert CloudPoint to LaserScan-->
+ <node pkg="velodyne_laserscan" type="velodyne_laserscan_node" name="velodyne_laserscan" respawn="false"></node>
+
 </launch>
